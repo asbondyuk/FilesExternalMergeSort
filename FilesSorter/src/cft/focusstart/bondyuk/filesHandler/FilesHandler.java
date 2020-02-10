@@ -90,9 +90,9 @@ public class FilesHandler {
         try (FileWriter fileWriter = new FileWriter(outputFile);
              PrintWriter printWriter = new PrintWriter(fileWriter)) {
 
-            int writeCount = 0;
+            int bufferReadersCount = bufferedReaders.length;
 
-            while (writeCount < tempFilesCount * maxItemsCount) {
+            while (bufferReadersCount > 0) {
                 if (settings.getSortDirection().getSortOrder() == 1) {
                     int minNumber = filesMaxNumbers[0];
                     int minNumberFileIndex = 0;
@@ -106,12 +106,12 @@ public class FilesHandler {
 
                     printWriter.println(minNumber);
 
-                    // TODO (?) исправить максимальные значения
                     String currentWriteLine = bufferedReaders[minNumberFileIndex].readLine();
                     if (currentWriteLine != null) {
                         filesMaxNumbers[minNumberFileIndex] = Integer.parseInt(currentWriteLine);
                     } else {
                         filesMaxNumbers[minNumberFileIndex] = Integer.MAX_VALUE;
+                        --bufferReadersCount;
                     }
                 } else {
                     int maxNumberNumber = filesMaxNumbers[0];
@@ -126,24 +126,19 @@ public class FilesHandler {
 
                     printWriter.println(maxNumberNumber);
 
-                    // TODO (?) исправить максимальные значения
                     String currentWriteLine = bufferedReaders[maxNumberFileIndex].readLine();
                     if (currentWriteLine != null) {
                         filesMaxNumbers[maxNumberFileIndex] = Integer.parseInt(currentWriteLine);
                     } else {
                         filesMaxNumbers[maxNumberFileIndex] = Integer.MIN_VALUE;
+                        --bufferReadersCount;
                     }
                 }
-
-
-                ++writeCount;
             }
 
             for (int i = 0; i < tempFilesCount; ++i) {
                 bufferedReaders[i].close();
             }
-
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -164,6 +159,9 @@ public class FilesHandler {
         for (File file : inputFiles) {
             outputFiles.addAll(splitFile(file));
         }
+
+        System.out.println(inputFiles);
+        System.out.println(outputFiles);
 
         File finalFile = combineFiles(settings.getOutputFileName(), outputFiles);
     }
