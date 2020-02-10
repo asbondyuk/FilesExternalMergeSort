@@ -1,7 +1,8 @@
 package cft.focusstart.bondyuk.sorter;
 
-public class MergeSortGeneric<T extends Comparable<T>> {
-    void sort(T[] array, int startIndex, int endIndex) {
+public class MergeSortGeneric implements Sorter {
+    @Override
+    public <T extends Comparable<T>> void sort(T[] array, int startIndex, int endIndex) {
         if (startIndex < endIndex) {
             int middleIndex = (startIndex + endIndex) / 2;
 
@@ -12,12 +13,12 @@ public class MergeSortGeneric<T extends Comparable<T>> {
         }
     }
 
-    void merge(T[] array, int start, int middle, int end) {
+    public <T extends Comparable<T>> void merge(T[] array, int start, int middle, int end) {
         T[] leftArray = (T[]) new Comparable[middle - start + 1];
         T[] rightArray = (T[]) new Comparable[end - middle];
 
-        for (int i = 0; i < leftArray.length; ++i) {
-            leftArray[i] = array[start + i];
+        if (leftArray.length >= 0) {
+            System.arraycopy(array, start, leftArray, 0, leftArray.length);
         }
 
         for (int i = 0; i < rightArray.length; ++i) {
