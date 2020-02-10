@@ -1,29 +1,48 @@
 package cft.focusstart.bondyuk.filesHandler;
 
+import cft.focusstart.bondyuk.settings.FileDataType;
+import cft.focusstart.bondyuk.settings.Settings;
+import cft.focusstart.bondyuk.settings.SettingsImp;
+import cft.focusstart.bondyuk.settings.SortOrder;
+
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-
+import java.util.List;
 
 public class FilesHandler {
     static int maxItemsCount = 3;
+    private Settings settings;
+    private boolean isInteger;
 
-    public static void externalSort(String fileName) {
+    public FilesHandler(Settings settings) {
+        this.settings = settings;
+        this.isInteger = settings.getFileDataType().equals(FileDataType.INTEGER);
+    }
+
+    private ArrayList<String> splitFile(String fileName) {
         ArrayList<String> tempFilesNames = new ArrayList<>();
-        String tempFilePrefix = fileName + "temp-file-";
-        int[] bufferSize = new int[maxItemsCount];
+        Integer[] bufferSize = new Integer[maxItemsCount];
 
         try (FileReader fileReader = new FileReader(fileName);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String currentLine = bufferedReader.readLine();
+
+            String tempFilePrefix;
+            String tempFilePostfix;
+            String tempFileName;
+
             int sizeCurrentChunk = 0;
             int fileCount = 0;
 
             while (currentLine != null) {
                 if (sizeCurrentChunk == maxItemsCount) {
-                    Arrays.sort(bufferSize);
+                    int sortStartIndex = 0;
+                    int sortEndIndex = bufferSize.length - 1;
+                    settings.getSorter().sort(bufferSize, sortStartIndex, sortEndIndex);
 
-                    String tempFileName = tempFilePrefix + fileCount + ".txt";
+                    tempFilePrefix = fileName + "temp-file-" + fileCount;
+                    tempFilePostfix = ".txt";
+                    tempFileName = tempFilePrefix + tempFilePostfix;
 
                     try (FileWriter fileWriter = new FileWriter(tempFileName);
                          PrintWriter printWriter = new PrintWriter(fileWriter)) {
@@ -44,9 +63,13 @@ public class FilesHandler {
             }
 
             if (sizeCurrentChunk > 0) {
-                Arrays.sort(bufferSize);
+                int sortStartIndex = 0;
+                int sortEndIndex = bufferSize.length - 1;
+                settings.getSorter().sort(bufferSize, sortStartIndex, sortEndIndex);
 
-                String tempFileName = tempFilePrefix + fileCount + ".txt";
+                tempFilePrefix = fileName + "temp-file-" + fileCount;
+                tempFilePostfix = ".txt";
+                tempFileName = tempFilePrefix + tempFilePostfix;
 
                 try (FileWriter fileWriter = new FileWriter(tempFileName);
                      PrintWriter printWriter = new PrintWriter(fileWriter)) {
@@ -57,67 +80,81 @@ public class FilesHandler {
                     }
                 }
             }
-
-            // TODO (?) разнести на несколько методов
-            int tempFilesCount = tempFilesNames.size();
-            int[] filesMaxNumbers = new int[tempFilesCount];
-            BufferedReader[] bufferedReaders = new BufferedReader[tempFilesCount];
-
-            // собираем текущие начальные значения
-            for (int i = 0; i < tempFilesCount; i++) {
-                bufferedReaders[i] = new BufferedReader(new FileReader(tempFilePrefix + i + ".txt"));
-                String currentWriteLine = bufferedReaders[i].readLine();
-
-                if (currentWriteLine != null) {
-                    filesMaxNumbers[i] = Integer.parseInt(currentWriteLine);
-                }
-            }
-
-            System.out.println(Arrays.toString(filesMaxNumbers));
-
-            // собираем итоговый файл
-            String SortFinalFileName = "out.txt";
-            try (FileWriter fileWriter = new FileWriter(SortFinalFileName);
-                 PrintWriter printWriter = new PrintWriter(fileWriter)) {
-
-                int writeCount = 0;
-
-                while (writeCount < tempFilesCount * maxItemsCount) {
-                    int minNumber = filesMaxNumbers[0];
-                    int minNumberFileIndex = 0;
-
-                    for (int j = 0; j < tempFilesCount; j++) {
-                        if (minNumber > filesMaxNumbers[j]) {
-                            minNumber = filesMaxNumbers[j];
-                            minNumberFileIndex = j;
-                        }
-                    }
-
-                    printWriter.println(minNumber);
-
-                    // TODO (?) исправить максимальные значения
-                    String currentWriteLine = bufferedReaders[minNumberFileIndex].readLine();
-                    if (currentWriteLine != null) {
-                        filesMaxNumbers[minNumberFileIndex] = Integer.parseInt(currentWriteLine);
-                    } else {
-                        filesMaxNumbers[minNumberFileIndex] = Integer.MAX_VALUE;
-                    }
-
-                    ++writeCount;
-                }
-
-                for (int i = 0; i < tempFilesCount; ++i) {
-                    bufferedReaders[i].close();
-                }
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return tempFilesNames;
+    }
+
+    private void combineFiles(String outputFileName, ArrayList<String> tempFilesNames) throws IOException {
+        int tempFilesCount = tempFilesNames.size();
+        int[] filesMaxNumbers = new int[tempFilesCount];
+        BufferedReader[] bufferedReaders = new BufferedReader[tempFilesCount];
+
+        for (int i = 0; i < tempFilesCount; i++) {
+            bufferedReaders[i] = new BufferedReader(new FileReader(tempFilesNames.get(i)));
+            String currentWriteLine = bufferedReaders[i].readLine();
+
+            if (currentWriteLine != null) {
+                filesMaxNumbers[i] = Integer.parseInt(currentWriteLine);
+            }
+        }
+
+        try (FileWriter fileWriter = new FileWriter(outputFileName);
+             PrintWriter printWriter = new PrintWriter(fileWriter)) {
+
+            int writeCount = 0;
+
+            while (writeCount < tempFilesCount * maxItemsCount) {
+                int minNumber = filesMaxNumbers[0];
+                int minNumberFileIndex = 0;
+
+                for (int j = 0; j < tempFilesCount; j++) {
+                    if (minNumber > filesMaxNumbers[j]) {
+                        minNumber = filesMaxNumbers[j];
+                        minNumberFileIndex = j;
+                    }
+                }
+
+                printWriter.println(minNumber);
+
+                // TODO (?) исправить максимальные значения
+                String currentWriteLine = bufferedReaders[minNumberFileIndex].readLine();
+                if (currentWriteLine != null) {
+                    filesMaxNumbers[minNumberFileIndex] = Integer.parseInt(currentWriteLine);
+                } else {
+                    filesMaxNumbers[minNumberFileIndex] = Integer.MAX_VALUE;
+                }
+
+                ++writeCount;
+            }
+
+            for (int i = 0; i < tempFilesCount; ++i) {
+                bufferedReaders[i].close();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void externalSort(String fileName) throws IOException {
+        combineFiles(settings.getOutputFileName(), splitFile(fileName));
     }
 
     public static void main(String[] args) {
         String fileName = "in4.txt";
-        externalSort(fileName);
+        List<String> filesList = new ArrayList<>();
+        filesList.add("out.txt");
+        filesList.add("in44.txt");
+
+        Settings settings = new SettingsImp(SortOrder.ASCENDING, FileDataType.INTEGER, filesList);
+        FilesHandler filesHandler = new FilesHandler(settings);
+
+        try {
+            filesHandler.externalSort(fileName);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

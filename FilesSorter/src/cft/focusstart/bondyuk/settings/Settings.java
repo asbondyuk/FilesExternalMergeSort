@@ -11,7 +11,7 @@ public interface Settings {
 
     SortDirection getSortDirection();
 
-    Sorter getSorter(SortDirection sortDirection);
+    Sorter getSorter();
 
     String getOutputFileName();
 

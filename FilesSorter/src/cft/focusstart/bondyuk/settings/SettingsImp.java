@@ -43,8 +43,8 @@ public class SettingsImp implements Settings {
     }
 
     @Override
-    public Sorter getSorter(SortDirection sortDirection) {
-        return new MergeSortGeneric(sortDirection);
+    public Sorter getSorter() {
+        return new MergeSortGeneric(getSortDirection());
     }
 
     @Override
