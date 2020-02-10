@@ -1,13 +1,19 @@
 package cft.focusstart.bondyuk.sorter;
 
 public class MergeSortGeneric implements Sorter {
+    private SortDirection sortDirection;
+
+    public MergeSortGeneric(SortDirection sortDirection) {
+        this.sortDirection = sortDirection;
+    }
+
     @Override
-    public <T extends Comparable<T>> void sort(T[] array, int startIndex, int endIndex, SortDirection sortDirection) {
+    public <T extends Comparable<T>> void sort(T[] array, int startIndex, int endIndex) {
         if (startIndex < endIndex) {
             int middleIndex = (startIndex + endIndex) / 2;
 
-            sort(array, startIndex, middleIndex, sortDirection);
-            sort(array, middleIndex + 1, endIndex, sortDirection);
+            sort(array, startIndex, middleIndex);
+            sort(array, middleIndex + 1, endIndex);
 
             merge(array, startIndex, middleIndex, endIndex, sortDirection);
         }

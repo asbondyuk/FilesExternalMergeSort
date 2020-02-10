@@ -56,5 +56,4 @@ public class CommandLineParser {
 
         return new SettingsImp(sortOrder, fileDataType, filesList);
     }
-
 }
