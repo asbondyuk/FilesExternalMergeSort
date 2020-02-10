@@ -2,18 +2,18 @@ package cft.focusstart.bondyuk.sorter;
 
 public class MergeSortGeneric implements Sorter {
     @Override
-    public <T extends Comparable<T>> void sort(T[] array, int startIndex, int endIndex) {
+    public <T extends Comparable<T>> void sort(T[] array, int startIndex, int endIndex, Comparator comparator) {
         if (startIndex < endIndex) {
             int middleIndex = (startIndex + endIndex) / 2;
 
-            sort(array, startIndex, middleIndex);
-            sort(array, middleIndex + 1, endIndex);
+            sort(array, startIndex, middleIndex, comparator);
+            sort(array, middleIndex + 1, endIndex, comparator);
 
-            merge(array, startIndex, middleIndex, endIndex);
+            merge(array, startIndex, middleIndex, endIndex, comparator);
         }
     }
 
-    public <T extends Comparable<T>> void merge(T[] array, int start, int middle, int end) {
+    public <T extends Comparable<T>> void merge(T[] array, int start, int middle, int end, Comparator comparator) {
         T[] leftArray = (T[]) new Comparable[middle - start + 1];
         T[] rightArray = (T[]) new Comparable[end - middle];
 
@@ -30,7 +30,7 @@ public class MergeSortGeneric implements Sorter {
         int currentIndex = start;
 
         while (leftIndex < leftArray.length && rightIndex < rightArray.length) {
-            if (leftArray[leftIndex].compareTo(rightArray[rightIndex]) <= 0) {
+            if (comparator.getSortOrder() * leftArray[leftIndex].compareTo(rightArray[rightIndex]) <= 0) {
                 array[currentIndex] = leftArray[leftIndex];
                 leftIndex++;
             } else {
