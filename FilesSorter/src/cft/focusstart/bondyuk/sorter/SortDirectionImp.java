@@ -2,10 +2,10 @@ package cft.focusstart.bondyuk.sorter;
 
 import cft.focusstart.bondyuk.settings.SortOrder;
 
-public class ComparatorImp implements Comparator {
+public class SortDirectionImp implements SortDirection {
     private SortOrder sortOrder;
 
-    public ComparatorImp(SortOrder sortOrder) {
+    public SortDirectionImp(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
 

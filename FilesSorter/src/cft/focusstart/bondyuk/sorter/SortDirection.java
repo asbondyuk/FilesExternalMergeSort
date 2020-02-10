@@ -1,5 +1,5 @@
 package cft.focusstart.bondyuk.sorter;
 
-public interface Comparator {
+public interface SortDirection {
     int getSortOrder();
 }
