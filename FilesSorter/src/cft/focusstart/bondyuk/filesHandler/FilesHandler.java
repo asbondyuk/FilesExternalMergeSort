@@ -93,25 +93,48 @@ public class FilesHandler {
             int writeCount = 0;
 
             while (writeCount < tempFilesCount * maxItemsCount) {
-                int minNumber = filesMaxNumbers[0];
-                int minNumberFileIndex = 0;
+                if (settings.getSortDirection().getSortOrder() == 1) {
+                    int minNumber = filesMaxNumbers[0];
+                    int minNumberFileIndex = 0;
 
-                for (int j = 0; j < tempFilesCount; j++) {
-                    if (minNumber > filesMaxNumbers[j]) {
-                        minNumber = filesMaxNumbers[j];
-                        minNumberFileIndex = j;
+                    for (int j = 0; j < tempFilesCount; j++) {
+                        if (minNumber > filesMaxNumbers[j]) {
+                            minNumber = filesMaxNumbers[j];
+                            minNumberFileIndex = j;
+                        }
+                    }
+
+                    printWriter.println(minNumber);
+
+                    // TODO (?) исправить максимальные значения
+                    String currentWriteLine = bufferedReaders[minNumberFileIndex].readLine();
+                    if (currentWriteLine != null) {
+                        filesMaxNumbers[minNumberFileIndex] = Integer.parseInt(currentWriteLine);
+                    } else {
+                        filesMaxNumbers[minNumberFileIndex] = Integer.MAX_VALUE;
+                    }
+                } else {
+                    int maxNumberNumber = filesMaxNumbers[0];
+                    int maxNumberFileIndex = 0;
+
+                    for (int j = 0; j < tempFilesCount; j++) {
+                        if (maxNumberNumber < filesMaxNumbers[j]) {
+                            maxNumberNumber = filesMaxNumbers[j];
+                            maxNumberFileIndex = j;
+                        }
+                    }
+
+                    printWriter.println(maxNumberNumber);
+
+                    // TODO (?) исправить максимальные значения
+                    String currentWriteLine = bufferedReaders[maxNumberFileIndex].readLine();
+                    if (currentWriteLine != null) {
+                        filesMaxNumbers[maxNumberFileIndex] = Integer.parseInt(currentWriteLine);
+                    } else {
+                        filesMaxNumbers[maxNumberFileIndex] = Integer.MIN_VALUE;
                     }
                 }
 
-                printWriter.println(minNumber);
-
-                // TODO (?) исправить максимальные значения
-                String currentWriteLine = bufferedReaders[minNumberFileIndex].readLine();
-                if (currentWriteLine != null) {
-                    filesMaxNumbers[minNumberFileIndex] = Integer.parseInt(currentWriteLine);
-                } else {
-                    filesMaxNumbers[minNumberFileIndex] = Integer.MAX_VALUE;
-                }
 
                 ++writeCount;
             }
