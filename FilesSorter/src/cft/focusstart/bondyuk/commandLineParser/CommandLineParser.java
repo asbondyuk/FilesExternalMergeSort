@@ -1,7 +1,7 @@
 package cft.focusstart.bondyuk.commandLineParser;
 
 import cft.focusstart.bondyuk.settings.FileDataType;
-import cft.focusstart.bondyuk.settings.Settings;
+import cft.focusstart.bondyuk.settings.SettingsImp;
 import cft.focusstart.bondyuk.settings.SortOrder;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class CommandLineParser {
                 "sort-it.exe -d -s out.txt in1.txt in2.txt (для строк по убыванию)");
     }
 
-    public static Settings commandLineParse(String[] args) {
+    public static SettingsImp commandLineParse(String[] args) {
         if (args[0].equals("-help")) {
             getHelp();
 
@@ -54,7 +54,7 @@ public class CommandLineParser {
             }
         }
 
-        return new Settings(sortOrder, fileDataType, filesList);
+        return new SettingsImp(sortOrder, fileDataType, filesList);
     }
 
 }
