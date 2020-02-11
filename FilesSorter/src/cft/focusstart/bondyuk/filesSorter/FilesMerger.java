@@ -44,8 +44,6 @@ public class FilesMerger {
             int nextWriteItemFileIndex;
 
             while (bufferedReaders.size() > 0) {
-                System.out.println(filesMaxNumbers);
-
                 nextWriteItem = filesMaxNumbers.get(0);
                 nextWriteItemFileIndex = 0;
 
@@ -73,8 +71,6 @@ public class FilesMerger {
                         }
                     }
                 }
-
-                System.out.println(nextWriteItem);
 
                 printWriter.println(nextWriteItem);
 

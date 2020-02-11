@@ -15,6 +15,7 @@ public class FilesSorter {
 
     public void mergeSortFiles() throws IOException {
         FileSplitter fileSplitter = new FileSplitter(settings);
+
         FilesMerger filesMerger = new FilesMerger(settings);
 
         filesMerger.mergeFiles(fileSplitter.splitFiles());

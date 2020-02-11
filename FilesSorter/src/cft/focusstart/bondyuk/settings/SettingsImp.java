@@ -22,7 +22,7 @@ public class SettingsImp implements Settings {
         this.sortComparator = sortOrder.equals(SortOrder.ASCENDING) ? new AscendingSortComparator() : new DescendingSortComparator();
         this.sorter = new MergeSortGeneric();
         this.outputFileName = filesList.get(0);
-        this.sortableFilesNameList = filesList.subList(1, filesList.size() - 1);
+        this.sortableFilesNameList = filesList.subList(1, filesList.size());
     }
 
     public static void validateSettings(DataType dataType, List<String> filesList) {
