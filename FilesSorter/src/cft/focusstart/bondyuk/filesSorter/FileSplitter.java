@@ -1,64 +1,73 @@
 package cft.focusstart.bondyuk.filesSorter;
 
-import cft.focusstart.bondyuk.settings.Settings;
+import cft.focusstart.bondyuk.settings.DataType;
+import cft.focusstart.bondyuk.sorter.comparators.AscendingSortComparator;
+import cft.focusstart.bondyuk.sorter.comparators.SortComparator;
+import cft.focusstart.bondyuk.sorter.sorters.MergeSortGeneric;
 
 import java.io.*;
 import java.util.ArrayList;
 
 public class FileSplitter {
     static int maxItemsCount = 3;
+    static MergeSortGeneric sorter = new MergeSortGeneric();
+    static SortComparator sortComparator = new AscendingSortComparator();
+    static DataType dataType = DataType.INTEGER;
 
-    static ArrayList<File> splitFile(File file, Settings settings) {
-        ArrayList<File> tempFiles = new ArrayList<>();
-        Integer[] bufferSize = new Integer[maxItemsCount];
+    public File createTempFile(String[] chunk) throws IOException {
         String tempFilePrefix = "sort-temp-file-";
-        String tempFilePostfix = null;
+
+        File newFile = File.createTempFile(tempFilePrefix, null);
+        try (FileWriter fileWriter = new FileWriter(newFile);
+             PrintWriter printWriter = new PrintWriter(fileWriter)) {
+
+            if (dataType == DataType.INTEGER) {
+                Integer[] data = DataWrapper.getIntegerData(chunk);
+                sorter.sort(data, sortComparator);
+
+                for (Integer s : data) {
+                    printWriter.println(s);
+                }
+            } else {
+                String[] data = DataWrapper.getStringData(chunk);
+                sorter.sort(data, sortComparator);
+
+                for (String s : data) {
+                    printWriter.println(s);
+                }
+            }
+        }
+
+        return newFile;
+    }
+
+    ArrayList<File> splitFile(File file) {
+        ArrayList<File> tempFiles = new ArrayList<>();
+        String[] chunk = new String[maxItemsCount];
 
         try (FileReader fileReader = new FileReader(file);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             int sizeCurrentChunk = 0;
-            int sortStartIndex = 0;
-            int sortEndIndex = bufferSize.length - 1;
+            String currentLine;
 
-            String currentLine = bufferedReader.readLine();
+            do {
+                currentLine = bufferedReader.readLine();
 
-            while (currentLine != null) {
-                if (sizeCurrentChunk == maxItemsCount) {
-                    settings.getSorter().sort(bufferSize, sortStartIndex, sortEndIndex);
-
-                    File currentFile = File.createTempFile(tempFilePrefix, tempFilePostfix);
-                    try (FileWriter fileWriter = new FileWriter(currentFile);
-                         PrintWriter printWriter = new PrintWriter(fileWriter)) {
-                        tempFiles.add(currentFile);
-
-                        for (int k = 0; k < sizeCurrentChunk; k++) {
-                            printWriter.println(bufferSize[k]);
-                        }
-                    }
+                if (sizeCurrentChunk == maxItemsCount || currentLine == null) {
+                    tempFiles.add(createTempFile(chunk));
 
                     sizeCurrentChunk = 0;
-                } else {
-                    bufferSize[sizeCurrentChunk] = Integer.parseInt(currentLine);
-                    ++sizeCurrentChunk;
-                    currentLine = bufferedReader.readLine();
-                }
-            }
 
-            if (sizeCurrentChunk > 0) {
-                settings.getSorter().sort(bufferSize, sortStartIndex, sortEndIndex);
-
-                File currentFile = File.createTempFile(tempFilePrefix, tempFilePostfix);
-                try (FileWriter fileWriter = new FileWriter(currentFile);
-                     PrintWriter printWriter = new PrintWriter(fileWriter)) {
-                    tempFiles.add(currentFile);
-
-                    for (int k = 0; k < sizeCurrentChunk; k++) {
-                        printWriter.println(bufferSize[k]);
+                    if (currentLine == null) {
+                        break;
                     }
+                } else {
+                    chunk[sizeCurrentChunk] = currentLine;
+                    ++sizeCurrentChunk;
                 }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            } while (true);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
         return tempFiles;

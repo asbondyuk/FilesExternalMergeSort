@@ -1,6 +1,6 @@
 package cft.focusstart.bondyuk.commandLineParser;
 
-import cft.focusstart.bondyuk.settings.FileDataType;
+import cft.focusstart.bondyuk.settings.DataType;
 import cft.focusstart.bondyuk.settings.SettingsImp;
 import cft.focusstart.bondyuk.settings.SortOrder;
 
@@ -31,7 +31,7 @@ public class CommandLineParser {
         }
 
         SortOrder sortOrder = SortOrder.ASCENDING;
-        FileDataType fileDataType = FileDataType.NOT_INSTALLED;
+        DataType dataType = DataType.NOT_INSTALLED;
         ArrayList<String> filesList = new ArrayList<>();
 
         for (String arg : args) {
@@ -43,10 +43,10 @@ public class CommandLineParser {
                     sortOrder = SortOrder.ASCENDING;
                     break;
                 case ("-i"):
-                    fileDataType = FileDataType.INTEGER;
+                    dataType = DataType.INTEGER;
                     break;
                 case ("-s"):
-                    fileDataType = FileDataType.STRING;
+                    dataType = DataType.STRING;
                     break;
                 default:
                     filesList.add(arg);
@@ -54,6 +54,6 @@ public class CommandLineParser {
             }
         }
 
-        return new SettingsImp(sortOrder, fileDataType, filesList);
+        return new SettingsImp(sortOrder, dataType, filesList);
     }
 }
