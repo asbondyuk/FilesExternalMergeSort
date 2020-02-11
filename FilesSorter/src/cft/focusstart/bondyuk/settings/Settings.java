@@ -6,7 +6,6 @@ import cft.focusstart.bondyuk.sorter.Sorter;
 import java.util.List;
 
 public interface Settings {
-
     FileDataType getFileDataType();
 
     SortDirection getSortDirection();

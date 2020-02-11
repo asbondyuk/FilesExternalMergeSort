@@ -1,4 +1,4 @@
-package cft.focusstart.bondyuk.filesHandler;
+package cft.focusstart.bondyuk.filesSorter;
 
 import cft.focusstart.bondyuk.settings.Settings;
 

@@ -1,14 +1,14 @@
-package cft.focusstart.bondyuk.filesHandler;
+package cft.focusstart.bondyuk.filesSorter;
 
 import cft.focusstart.bondyuk.settings.Settings;
 
 import java.io.*;
 import java.util.ArrayList;
 
-public class FilesHandler {
+public class FilesSorter {
     private Settings settings;
 
-    public FilesHandler(Settings settings) {
+    public FilesSorter(Settings settings) {
         this.settings = settings;
     }
 
