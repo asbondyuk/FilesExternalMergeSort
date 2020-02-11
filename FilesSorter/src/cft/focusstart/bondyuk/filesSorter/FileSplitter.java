@@ -4,17 +4,18 @@ import cft.focusstart.bondyuk.settings.DataType;
 import cft.focusstart.bondyuk.sorter.comparators.AscendingSortComparator;
 import cft.focusstart.bondyuk.sorter.comparators.SortComparator;
 import cft.focusstart.bondyuk.sorter.sorters.MergeSortGeneric;
+import cft.focusstart.bondyuk.sorter.sorters.Sorter;
 
 import java.io.*;
 import java.util.ArrayList;
 
 public class FileSplitter {
     static int maxItemsCount = 3;
-    static MergeSortGeneric sorter = new MergeSortGeneric();
+    static Sorter sorter = new MergeSortGeneric();
     static SortComparator sortComparator = new AscendingSortComparator();
     static DataType dataType = DataType.INTEGER;
 
-    public File createTempFile(String[] chunk) throws IOException {
+    private File createTempFile(String[] chunk) throws IOException {
         String tempFilePrefix = "sort-temp-file-";
 
         File newFile = File.createTempFile(tempFilePrefix, null);

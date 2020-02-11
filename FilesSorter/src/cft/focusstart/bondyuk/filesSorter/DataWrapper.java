@@ -1,6 +1,14 @@
 package cft.focusstart.bondyuk.filesSorter;
 
 public class DataWrapper {
+    public static String getString(String data) {
+        return data;
+    }
+
+    public static Integer getInteger(String data) throws NumberFormatException {
+        return Integer.parseInt(data);
+    }
+
     public static String[] getStringData(String[] data) {
         return data;
     }

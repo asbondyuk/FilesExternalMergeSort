@@ -1,25 +1,31 @@
-package cft.focusstart.bondyuk.sorter;
+package cft.focusstart.bondyuk.sorter.sorters;
+
+import cft.focusstart.bondyuk.sorter.comparators.SortComparator;
 
 public class MergeSortGeneric implements Sorter {
-    private SortDirection sortDirection;
-
-    public MergeSortGeneric(SortDirection sortDirection) {
-        this.sortDirection = sortDirection;
-    }
+    private SortComparator sortComparator;
 
     @Override
-    public <T extends Comparable<? super T>> void sort(T[] array, int startIndex, int endIndex) {
+    public <T extends Comparable<T>> void sort(T[] array, SortComparator sortComparator) {
+        int startIndex = 0;
+        int endIndex = array.length - 1;
+        this.sortComparator = sortComparator;
+
+        sort(array, startIndex, endIndex);
+    }
+
+    public <T extends Comparable<T>> void sort(T[] array, int startIndex, int endIndex) {
         if (startIndex < endIndex) {
             int middleIndex = (startIndex + endIndex) / 2;
 
             sort(array, startIndex, middleIndex);
             sort(array, middleIndex + 1, endIndex);
 
-            merge(array, startIndex, middleIndex, endIndex, sortDirection);
+            merge(array, startIndex, middleIndex, endIndex);
         }
     }
 
-    public <T extends Comparable<? super T>> void merge(T[] array, int start, int middle, int end, SortDirection sortDirection) {
+    public <T extends Comparable<T>> void merge(T[] array, int start, int middle, int end) {
         T[] leftArray = (T[]) new Comparable[middle - start + 1];
         T[] rightArray = (T[]) new Comparable[end - middle];
 
@@ -36,7 +42,7 @@ public class MergeSortGeneric implements Sorter {
         int currentIndex = start;
 
         while (leftIndex < leftArray.length && rightIndex < rightArray.length) {
-            if (sortDirection.getSortOrder() * leftArray[leftIndex].compareTo(rightArray[rightIndex]) <= 0) {
+            if (sortComparator.compare(leftArray[leftIndex], rightArray[rightIndex]) <= 0) {
                 array[currentIndex] = leftArray[leftIndex];
                 leftIndex++;
             } else {

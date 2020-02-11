@@ -1,4 +1,4 @@
-package cft.focusstart.bondyuk.sorter;
+package cft.focusstart.bondyuk.sorter.sorters;
 
 import cft.focusstart.bondyuk.settings.SortOrder;
 

@@ -1,79 +1,94 @@
 package cft.focusstart.bondyuk.filesSorter;
 
-import cft.focusstart.bondyuk.settings.Settings;
+import cft.focusstart.bondyuk.settings.DataType;
+import cft.focusstart.bondyuk.sorter.comparators.AscendingSortComparator;
+import cft.focusstart.bondyuk.sorter.comparators.DescendingSortComparator;
+import cft.focusstart.bondyuk.sorter.comparators.SortComparator;
+import cft.focusstart.bondyuk.sorter.sorters.MergeSortGeneric;
+import cft.focusstart.bondyuk.sorter.sorters.Sorter;
 
 import java.io.*;
 import java.util.ArrayList;
 
 public class FilesMerger {
-    static File mergeFiles(Settings settings, ArrayList<File> tempFiles) throws IOException {
-        int tempFilesCount = tempFiles.size();
-        int[] filesMaxNumbers = new int[tempFilesCount];
-        BufferedReader[] bufferedReaders = new BufferedReader[tempFilesCount];
+    static Sorter sorter = new MergeSortGeneric();
+    static SortComparator sortComparator = new DescendingSortComparator();
+    static DataType dataType = DataType.INTEGER;
+    static String outputFileName = "out.txt";
 
-        for (int i = 0; i < tempFilesCount; i++) {
-            bufferedReaders[i] = new BufferedReader(new FileReader(tempFiles.get(i)));
-            String currentWriteLine = bufferedReaders[i].readLine();
+    private BufferedReader getBufferedRead(File file) throws FileNotFoundException {
+        FileReader fileReader = new FileReader(file);
 
-            if (currentWriteLine != null) {
-                filesMaxNumbers[i] = Integer.parseInt(currentWriteLine);
-            }
+        return new BufferedReader(fileReader);
+
+    }
+
+    public File mergeFiles(ArrayList<File> tempFiles) throws IOException {
+        ArrayList<String> filesMaxNumbers = new ArrayList<>();
+        ArrayList<BufferedReader> bufferedReaders = new ArrayList<>();
+
+        BufferedReader bufferedReader;
+        String currentWriteLine;
+
+        for (int i = 0; i < tempFiles.size(); ++i) {
+            bufferedReader = getBufferedRead(tempFiles.get(i));
+            bufferedReaders.add(bufferedReader);
+
+            currentWriteLine = bufferedReaders.get(i).readLine();
+
+            filesMaxNumbers.add(currentWriteLine);
         }
 
-        File outputFile = new File(settings.getOutputFileName());
+        File outputFile = new File(outputFileName);
 
         try (FileWriter fileWriter = new FileWriter(outputFile);
              PrintWriter printWriter = new PrintWriter(fileWriter)) {
+            String nextWriteItem;
+            int nextWriteItemFileIndex;
 
-            int bufferReadersCount = bufferedReaders.length;
+            while (bufferedReaders.size() > 0) {
+                System.out.println(filesMaxNumbers);
 
-            while (bufferReadersCount > 0) {
-                if (settings.getSortDirection().getSortOrder() == 1) {
-                    int minNumber = filesMaxNumbers[0];
-                    int minNumberFileIndex = 0;
+                nextWriteItem = filesMaxNumbers.get(0);
+                nextWriteItemFileIndex = 0;
 
-                    for (int j = 0; j < tempFilesCount; j++) {
-                        if (minNumber > filesMaxNumbers[j]) {
-                            minNumber = filesMaxNumbers[j];
-                            minNumberFileIndex = j;
+                String[] tmp = new String[2];
+
+                for (int j = 0; j < bufferedReaders.size(); ++j) {
+                    tmp[0] = nextWriteItem;
+                    tmp[1] = filesMaxNumbers.get(j);
+
+                    if (dataType == DataType.INTEGER) {
+                        Integer one = DataWrapper.getInteger(tmp[0]);
+                        Integer two = DataWrapper.getInteger(tmp[1]);
+
+                        if (sortComparator.compare(one, two) > 0) {
+                            nextWriteItem = filesMaxNumbers.get(j);
+                            nextWriteItemFileIndex = j;
                         }
-                    }
-
-                    printWriter.println(minNumber);
-
-                    String currentWriteLine = bufferedReaders[minNumberFileIndex].readLine();
-                    if (currentWriteLine != null) {
-                        filesMaxNumbers[minNumberFileIndex] = Integer.parseInt(currentWriteLine);
                     } else {
-                        filesMaxNumbers[minNumberFileIndex] = Integer.MAX_VALUE;
-                        --bufferReadersCount;
-                    }
-                } else {
-                    int maxNumberNumber = filesMaxNumbers[0];
-                    int maxNumberFileIndex = 0;
+                        String one = DataWrapper.getString(tmp[0]);
+                        String two = DataWrapper.getString(tmp[1]);
 
-                    for (int j = 0; j < tempFilesCount; j++) {
-                        if (maxNumberNumber < filesMaxNumbers[j]) {
-                            maxNumberNumber = filesMaxNumbers[j];
-                            maxNumberFileIndex = j;
+                        if (sortComparator.compare(one, two) > 0) {
+                            nextWriteItem = filesMaxNumbers.get(j);
+                            nextWriteItemFileIndex = j;
                         }
-                    }
-
-                    printWriter.println(maxNumberNumber);
-
-                    String currentWriteLine = bufferedReaders[maxNumberFileIndex].readLine();
-                    if (currentWriteLine != null) {
-                        filesMaxNumbers[maxNumberFileIndex] = Integer.parseInt(currentWriteLine);
-                    } else {
-                        filesMaxNumbers[maxNumberFileIndex] = Integer.MIN_VALUE;
-                        --bufferReadersCount;
                     }
                 }
-            }
 
-            for (int i = 0; i < tempFilesCount; ++i) {
-                bufferedReaders[i].close();
-                tempFiles.get(i).deleteOnExit();
+                System.out.println(nextWriteItem);
+
+                printWriter.println(nextWriteItem);
+
+                currentWriteLine = bufferedReaders.get(nextWriteItemFileIndex).readLine();
+                if (currentWriteLine != null) {
+                    filesMaxNumbers.set(nextWriteItemFileIndex, currentWriteLine);
+                } else {
+                    filesMaxNumbers.remove(nextWriteItemFileIndex);
+                    bufferedReaders.get(nextWriteItemFileIndex).close();
+                    bufferedReaders.remove(nextWriteItemFileIndex);
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
