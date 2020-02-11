@@ -1,4 +1,8 @@
-aaab
-baaa
-aaac
-cccc
+g
+h
+d
+b
+c
+e
+f
+g
