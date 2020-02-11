@@ -8,7 +8,7 @@ public class MergeSortGeneric implements Sorter {
     }
 
     @Override
-    public <T extends Comparable<T>> void sort(T[] array, int startIndex, int endIndex) {
+    public <T extends Comparable<? super T>> void sort(T[] array, int startIndex, int endIndex) {
         if (startIndex < endIndex) {
             int middleIndex = (startIndex + endIndex) / 2;
 
@@ -19,7 +19,7 @@ public class MergeSortGeneric implements Sorter {
         }
     }
 
-    public <T extends Comparable<T>> void merge(T[] array, int start, int middle, int end, SortDirection sortDirection) {
+    public <T extends Comparable<? super T>> void merge(T[] array, int start, int middle, int end, SortDirection sortDirection) {
         T[] leftArray = (T[]) new Comparable[middle - start + 1];
         T[] rightArray = (T[]) new Comparable[end - middle];
 
