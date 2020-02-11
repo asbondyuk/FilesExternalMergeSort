@@ -1,6 +1,6 @@
 package cft.focusstart.bondyuk.settings;
 
-public enum FileDataType {
+public enum DataType {
     NOT_INSTALLED,
     STRING,
     INTEGER

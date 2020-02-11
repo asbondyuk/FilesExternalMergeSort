@@ -1,20 +1,17 @@
 package cft.focusstart.bondyuk.filesSorter;
 
 import cft.focusstart.bondyuk.settings.DataType;
-import cft.focusstart.bondyuk.sorter.comparators.AscendingSortComparator;
-import cft.focusstart.bondyuk.sorter.comparators.DescendingSortComparator;
-import cft.focusstart.bondyuk.sorter.comparators.SortComparator;
-import cft.focusstart.bondyuk.sorter.sorters.MergeSortGeneric;
-import cft.focusstart.bondyuk.sorter.sorters.Sorter;
+import cft.focusstart.bondyuk.settings.Settings;
 
 import java.io.*;
 import java.util.ArrayList;
 
 public class FilesMerger {
-    static Sorter sorter = new MergeSortGeneric();
-    static SortComparator sortComparator = new DescendingSortComparator();
-    static DataType dataType = DataType.INTEGER;
-    static String outputFileName = "out.txt";
+    private Settings settings;
+
+    public FilesMerger(Settings settings) {
+        this.settings = settings;
+    }
 
     private BufferedReader getBufferedRead(File file) throws FileNotFoundException {
         FileReader fileReader = new FileReader(file);
@@ -23,7 +20,7 @@ public class FilesMerger {
 
     }
 
-    public File mergeFiles(ArrayList<File> tempFiles) throws IOException {
+    public void mergeFiles(ArrayList<File> tempFiles) throws IOException {
         ArrayList<String> filesMaxNumbers = new ArrayList<>();
         ArrayList<BufferedReader> bufferedReaders = new ArrayList<>();
 
@@ -39,7 +36,7 @@ public class FilesMerger {
             filesMaxNumbers.add(currentWriteLine);
         }
 
-        File outputFile = new File(outputFileName);
+        File outputFile = new File(settings.getOutputFileName());
 
         try (FileWriter fileWriter = new FileWriter(outputFile);
              PrintWriter printWriter = new PrintWriter(fileWriter)) {
@@ -58,11 +55,11 @@ public class FilesMerger {
                     tmp[0] = nextWriteItem;
                     tmp[1] = filesMaxNumbers.get(j);
 
-                    if (dataType == DataType.INTEGER) {
+                    if (settings.getDataType() == DataType.INTEGER) {
                         Integer one = DataWrapper.getInteger(tmp[0]);
                         Integer two = DataWrapper.getInteger(tmp[1]);
 
-                        if (sortComparator.compare(one, two) > 0) {
+                        if (settings.getSortComparator().compare(one, two) > 0) {
                             nextWriteItem = filesMaxNumbers.get(j);
                             nextWriteItemFileIndex = j;
                         }
@@ -70,7 +67,7 @@ public class FilesMerger {
                         String one = DataWrapper.getString(tmp[0]);
                         String two = DataWrapper.getString(tmp[1]);
 
-                        if (sortComparator.compare(one, two) > 0) {
+                        if (settings.getSortComparator().compare(one, two) > 0) {
                             nextWriteItem = filesMaxNumbers.get(j);
                             nextWriteItemFileIndex = j;
                         }
@@ -93,7 +90,5 @@ public class FilesMerger {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
-        return outputFile;
     }
 }

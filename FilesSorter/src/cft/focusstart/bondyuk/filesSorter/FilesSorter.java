@@ -1,5 +1,6 @@
 package cft.focusstart.bondyuk.filesSorter;
 
+import cft.focusstart.bondyuk.settings.DataType;
 import cft.focusstart.bondyuk.settings.Settings;
 
 import java.io.*;
@@ -13,19 +14,11 @@ public class FilesSorter {
     }
 
     public void mergeSortFiles() throws IOException {
-        ArrayList<File> inputFiles = new ArrayList<>();
-        ArrayList<File> outputFiles = new ArrayList<>();
+        FileSplitter fileSplitter = new FileSplitter(settings);
+        FilesMerger filesMerger = new FilesMerger(settings);
 
-        for (String fileName : settings.getFilesList()) {
-            File file = new File(fileName);
-            inputFiles.add(file);
-        }
+        filesMerger.mergeFiles(fileSplitter.splitFiles());
 
-        for (File file : inputFiles) {
-            outputFiles.addAll(FileSplitter.splitFile(file, settings));
-        }
-
-        File finalFile = FilesMerger.mergeFiles(settings, outputFiles);
-        System.out.printf("Сортировка выполнена. Файл %s готов", finalFile.getName());
+        System.out.println("Сортировка выполнена");
     }
 }

@@ -1,20 +1,32 @@
 package cft.focusstart.bondyuk.settings;
 
-import cft.focusstart.bondyuk.sorter.MergeSortGeneric;
-import cft.focusstart.bondyuk.sorter.SortDirection;
-import cft.focusstart.bondyuk.sorter.SortDirectionImp;
-import cft.focusstart.bondyuk.sorter.Sorter;
+import cft.focusstart.bondyuk.sorter.comparators.AscendingSortComparator;
+import cft.focusstart.bondyuk.sorter.comparators.DescendingSortComparator;
+import cft.focusstart.bondyuk.sorter.comparators.SortComparator;
+import cft.focusstart.bondyuk.sorter.sorters.MergeSortGeneric;
+import cft.focusstart.bondyuk.sorter.sorters.Sorter;
 
 import java.util.List;
 
 public class SettingsImp implements Settings {
-    private SortOrder sortOrder;
-    private FileDataType fileDataType;
+    private DataType dataType;
+    private SortComparator sortComparator;
+    private Sorter sorter;
     private String outputFileName;
-    private List<String> filesList;
+    private List<String> sortableFilesNameList;
 
-    public SettingsImp(SortOrder sortOrder, FileDataType fileDataType, List<String> filesList) {
-        if (fileDataType.equals(FileDataType.NOT_INSTALLED)) {
+    public SettingsImp(SortOrder sortOrder, DataType dataType, List<String> filesList) {
+        SettingsImp.validateSettings(dataType, filesList);
+
+        this.dataType = dataType;
+        this.sortComparator = sortOrder.equals(SortOrder.ASCENDING) ? new AscendingSortComparator() : new DescendingSortComparator();
+        this.sorter = new MergeSortGeneric();
+        this.outputFileName = filesList.get(0);
+        this.sortableFilesNameList = filesList.subList(1, filesList.size() - 1);
+    }
+
+    public static void validateSettings(DataType dataType, List<String> filesList) {
+        if (dataType.equals(DataType.NOT_INSTALLED)) {
             throw new IllegalArgumentException("Необходимо задать тип данных: \"-i\" для чисел или \"-s\" для строк (или воспользуйтесь \"-help\")");
         }
 
@@ -25,26 +37,21 @@ public class SettingsImp implements Settings {
         if (filesList.size() < 2) {
             throw new IllegalArgumentException("Необходимо задать название файла для сортировки (или воспользуйтесь \"-help\")");
         }
-
-        this.sortOrder = sortOrder;
-        this.fileDataType = fileDataType;
-        this.outputFileName = filesList.get(0);
-        this.filesList = filesList.subList(1, filesList.size());
     }
 
     @Override
-    public FileDataType getFileDataType() {
-        return fileDataType;
+    public DataType getDataType() {
+        return dataType;
     }
 
     @Override
-    public SortDirection getSortDirection() {
-        return new SortDirectionImp(sortOrder);
+    public SortComparator getSortComparator() {
+        return sortComparator;
     }
 
     @Override
     public Sorter getSorter() {
-        return new MergeSortGeneric(getSortDirection());
+        return sorter;
     }
 
     @Override
@@ -54,6 +61,6 @@ public class SettingsImp implements Settings {
 
     @Override
     public List<String> getFilesList() {
-        return filesList;
+        return sortableFilesNameList;
     }
 }

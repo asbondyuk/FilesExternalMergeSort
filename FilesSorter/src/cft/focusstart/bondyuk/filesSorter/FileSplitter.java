@@ -1,50 +1,32 @@
 package cft.focusstart.bondyuk.filesSorter;
 
 import cft.focusstart.bondyuk.settings.DataType;
-import cft.focusstart.bondyuk.sorter.comparators.AscendingSortComparator;
-import cft.focusstart.bondyuk.sorter.comparators.SortComparator;
-import cft.focusstart.bondyuk.sorter.sorters.MergeSortGeneric;
-import cft.focusstart.bondyuk.sorter.sorters.Sorter;
+import cft.focusstart.bondyuk.settings.Settings;
+import cft.focusstart.bondyuk.settings.SortingChunkMaxSize;
 
 import java.io.*;
 import java.util.ArrayList;
 
 public class FileSplitter {
-    static int maxItemsCount = 3;
-    static Sorter sorter = new MergeSortGeneric();
-    static SortComparator sortComparator = new AscendingSortComparator();
-    static DataType dataType = DataType.INTEGER;
+    private Settings settings;
 
-    private File createTempFile(String[] chunk) throws IOException {
-        String tempFilePrefix = "sort-temp-file-";
-
-        File newFile = File.createTempFile(tempFilePrefix, null);
-        try (FileWriter fileWriter = new FileWriter(newFile);
-             PrintWriter printWriter = new PrintWriter(fileWriter)) {
-
-            if (dataType == DataType.INTEGER) {
-                Integer[] data = DataWrapper.getIntegerData(chunk);
-                sorter.sort(data, sortComparator);
-
-                for (Integer s : data) {
-                    printWriter.println(s);
-                }
-            } else {
-                String[] data = DataWrapper.getStringData(chunk);
-                sorter.sort(data, sortComparator);
-
-                for (String s : data) {
-                    printWriter.println(s);
-                }
-            }
-        }
-
-        return newFile;
+    public FileSplitter(Settings settings) {
+        this.settings = settings;
     }
 
-    ArrayList<File> splitFile(File file) {
+    public ArrayList<File> splitFiles() {
+        ArrayList<File> files = new ArrayList<>();
+
+        for (String file : settings.getFilesList()) {
+            files.addAll(splitFile(new File(file)));
+        }
+
+        return files;
+    }
+
+    private ArrayList<File> splitFile(File file) {
         ArrayList<File> tempFiles = new ArrayList<>();
-        String[] chunk = new String[maxItemsCount];
+        String[] chunk = new String[SortingChunkMaxSize.getSize()];
 
         try (FileReader fileReader = new FileReader(file);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
@@ -54,7 +36,7 @@ public class FileSplitter {
             do {
                 currentLine = bufferedReader.readLine();
 
-                if (sizeCurrentChunk == maxItemsCount || currentLine == null) {
+                if (sizeCurrentChunk == SortingChunkMaxSize.getSize() || currentLine == null) {
                     tempFiles.add(createTempFile(chunk));
 
                     sizeCurrentChunk = 0;
@@ -72,5 +54,32 @@ public class FileSplitter {
         }
 
         return tempFiles;
+    }
+
+    private File createTempFile(String[] chunk) throws IOException {
+        String tempFilePrefix = "sort-temp-file-";
+
+        File newFile = File.createTempFile(tempFilePrefix, null);
+        try (FileWriter fileWriter = new FileWriter(newFile);
+             PrintWriter printWriter = new PrintWriter(fileWriter)) {
+
+            if (settings.getDataType() == DataType.INTEGER) {
+                Integer[] data = DataWrapper.getIntegerData(chunk);
+                settings.getSorter().sort(data, settings.getSortComparator());
+
+                for (Integer s : data) {
+                    printWriter.println(s);
+                }
+            } else {
+                String[] data = DataWrapper.getStringData(chunk);
+                settings.getSorter().sort(data, settings.getSortComparator());
+
+                for (String s : data) {
+                    printWriter.println(s);
+                }
+            }
+        }
+
+        return newFile;
     }
 }

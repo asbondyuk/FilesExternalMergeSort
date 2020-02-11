@@ -1,14 +1,14 @@
 package cft.focusstart.bondyuk.settings;
 
-import cft.focusstart.bondyuk.sorter.SortDirection;
-import cft.focusstart.bondyuk.sorter.Sorter;
+import cft.focusstart.bondyuk.sorter.comparators.SortComparator;
+import cft.focusstart.bondyuk.sorter.sorters.Sorter;
 
 import java.util.List;
 
 public interface Settings {
-    FileDataType getFileDataType();
+    DataType getDataType();
 
-    SortDirection getSortDirection();
+    SortComparator getSortComparator();
 
     Sorter getSorter();
 
