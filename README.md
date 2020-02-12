@@ -1,14 +1,16 @@
 # FilesExternalMergeSort
 тестовое задание Focus Start (CFT) февраль 2020
 
-Исполняемый файл:
-out/artifacts/FilesExternalMergeSort_jar/FilesExternalMergeSort.jar
 
 # Инструкция
+Скачать исполняемый файл
+out/artifacts/FilesExternalMergeSort_jar/FilesExternalMergeSort.jar
+
 1. режим сортировки (-a или -d), необязательный, по умолчанию сортируем по возрастанию;
 2. тип данных (-s или -i), обязательный;
 3. имя выходного файла, обязательное;
 4. остальные параметры – имена входных файлов, не менее одного.
+
 
 Запуск программы(на примере Ubuntu 18.04)
 java -jar FilesExternalMergeSort.jar -d -i out.txt in1.txt in2.txt in5.txt in3.txt in4.txt
@@ -28,11 +30,3 @@ java -jar FilesExternalMergeSort.jar -d -i out.txt in1.txt in2.txt in5.txt in3.t
 Слияние промежуточных файлов (FilesMerger) происходит без учета chunk
 
 4. Java 8 (OpenJDK Runtime Environment (build 1.8.0_212-b03))
-
-
-(?) Оставшийся план работ:
-1. Валидация существования файлов для сортировки
-2. Добавление лицензии MIT (?)
-3. Добавить тестов
-4. связать FilesMerger c chunks (если временных файлов будет много)
-5. добавить режим выбора (с предварительной сортировкой и без)
