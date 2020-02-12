@@ -17,8 +17,8 @@ public class FileSplitter {
     public ArrayList<File> splitFiles() {
         ArrayList<File> files = new ArrayList<>();
 
-        for (String file : settings.getFilesList()) {
-            files.addAll(splitFile(new File(file)));
+        for (String fileName : settings.getFilesNameList()) {
+            files.addAll(splitFile(new File(fileName)));
         }
 
         return files;
@@ -65,14 +65,14 @@ public class FileSplitter {
             String[] correctChunk = DataValidator.deleteNull(chunk);
 
             if (settings.getDataType() == DataType.INTEGER) {
-                Integer[] data = DataValidator.getIntegerData(correctChunk);
+                Integer[] data = DataWrapper.getIntegerData(correctChunk);
                 settings.getSorter().sort(data, settings.getSortComparator());
 
                 for (Integer s : data) {
                     printWriter.println(s);
                 }
             } else {
-                String[] data = DataValidator.getStringData(correctChunk);
+                String[] data = DataWrapper.getStringData(correctChunk);
                 settings.getSorter().sort(data, settings.getSortComparator());
 
                 for (String s : data) {

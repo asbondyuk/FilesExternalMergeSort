@@ -14,5 +14,5 @@ public interface Settings {
 
     String getOutputFileName();
 
-    List<String> getFilesList();
+    List<String> getFilesNameList();
 }

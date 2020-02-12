@@ -47,16 +47,16 @@ public class FilesMerger {
                     tmp[1] = filesMaxNumbers.get(j);
 
                     if (settings.getDataType() == DataType.INTEGER) {
-                        Integer one = DataValidator.getInteger(tmp[0]);
-                        Integer two = DataValidator.getInteger(tmp[1]);
+                        Integer one = DataWrapper.getInteger(tmp[0]);
+                        Integer two = DataWrapper.getInteger(tmp[1]);
 
                         if (settings.getSortComparator().compare(one, two) > 0) {
                             nextWriteItem = filesMaxNumbers.get(j);
                             nextWriteItemFileIndex = j;
                         }
                     } else {
-                        String one = DataValidator.getString(tmp[0]);
-                        String two = DataValidator.getString(tmp[1]);
+                        String one = DataWrapper.getString(tmp[0]);
+                        String two = DataWrapper.getString(tmp[1]);
 
                         if (settings.getSortComparator().compare(one, two) > 0) {
                             nextWriteItem = filesMaxNumbers.get(j);

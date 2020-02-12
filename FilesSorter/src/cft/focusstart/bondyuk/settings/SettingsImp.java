@@ -60,7 +60,7 @@ public class SettingsImp implements Settings {
     }
 
     @Override
-    public List<String> getFilesList() {
+    public List<String> getFilesNameList() {
         return sortableFilesNameList;
     }
 }

@@ -12,34 +12,12 @@ public class DataValidator {
         return list.toArray(new String[0]);
     }
 
-    public static String getString(String data) {
-        return data;
-    }
-
-    public static Integer getInteger(String data) throws NumberFormatException {
-        return Integer.parseInt(data);
-    }
-
-    public static String[] getStringData(String[] data) {
-        return data;
-    }
-
-    public static Integer[] getIntegerData(String[] data) throws NumberFormatException {
-        Integer[] integers = new Integer[data.length];
-
-        for (int i = 0; i < data.length; ++i) {
-            try {
-                if (data[i] != null) {
-                    integers[i] = Integer.parseInt(data[i]);
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Чет не то с: " + data[i]);
-                System.out.println(Arrays.toString(data));
-            } catch (NullPointerException e) {
-                System.out.println("Вижу null " + data[i]);
-            }
+    public static boolean isDigit(String data) {
+        try {
+            Integer.parseInt(data);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
-
-        return integers;
     }
 }
