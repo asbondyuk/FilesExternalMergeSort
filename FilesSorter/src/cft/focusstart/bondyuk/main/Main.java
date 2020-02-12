@@ -7,10 +7,8 @@ import cft.focusstart.bondyuk.settings.Settings;
 
 public class Main {
     public static void main(String[] args) {
-        String[] strings = new String[]{"-d", "-a", "out.txt", "in1.txt", "in2.txt", "in3.txt", "in4.txt", "-chunk3"};
-
         CommandLineParser commandLineParser = new CommandLineParserImp();
-        Settings settings = commandLineParser.parseCommandLine(strings);
+        Settings settings = commandLineParser.parseCommandLine(args);
         FilesSorter filesSorter = new FilesSorter(settings);
 
         filesSorter.mergeSortFiles();

@@ -74,6 +74,7 @@ public class FileSplitter {
 
             if (settings.getDataType() == DataType.INTEGER) {
                 Integer[] data = DataWrapper.getIntegerData(correctChunk);
+
                 settings.getSorter().sort(data, settings.getSortComparator());
 
                 for (Integer s : data) {
@@ -81,6 +82,7 @@ public class FileSplitter {
                 }
             } else {
                 String[] data = DataWrapper.getStringData(correctChunk);
+
                 settings.getSorter().sort(data, settings.getSortComparator());
 
                 for (String s : data) {

@@ -1,13 +1,13 @@
 package cft.focusstart.bondyuk.settings;
 
-import cft.focusstart.bondyuk.settings.dataType.DataType;
+import cft.focusstart.bondyuk.commandLineParser.Helper;
 import cft.focusstart.bondyuk.settings.chunks.ChunkMaxSize;
+import cft.focusstart.bondyuk.settings.dataType.DataType;
 import cft.focusstart.bondyuk.sorter.comparators.AscendingSortComparator;
 import cft.focusstart.bondyuk.sorter.comparators.DescendingSortComparator;
 import cft.focusstart.bondyuk.sorter.comparators.SortComparator;
 import cft.focusstart.bondyuk.sorter.sorters.MergeSortGeneric;
 import cft.focusstart.bondyuk.sorter.sorters.Sorter;
-import org.w3c.dom.ranges.RangeException;
 
 import java.util.List;
 
@@ -45,6 +45,9 @@ public class SettingsImp implements Settings {
             }
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
+
+            Helper.getHelpCommand();
+
             System.exit(0);
         }
     }

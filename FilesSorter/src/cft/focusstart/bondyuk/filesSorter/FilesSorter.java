@@ -1,5 +1,6 @@
 package cft.focusstart.bondyuk.filesSorter;
 
+import cft.focusstart.bondyuk.commandLineParser.Helper;
 import cft.focusstart.bondyuk.settings.Settings;
 
 import java.io.IOException;
@@ -20,8 +21,8 @@ public class FilesSorter {
             filesMerger.mergeFiles(fileSplitter.splitFiles());
         } catch (IOException e) {
             System.out.println(e.getMessage());
-        }
 
-        System.out.println("Сортировка выполнена");
+            Helper.getHelpCommand();
+        }
     }
 }

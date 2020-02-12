@@ -12,14 +12,12 @@ import java.util.ArrayList;
 public class CommandLineParserImp implements CommandLineParser {
     @Override
     public Settings parseCommandLine(String[] commandLine) {
-        if (commandLine[0].equals("-help")) {
-            Helper.help();
+        if (commandLine.length > 0) {
+            if (commandLine[0].equals("-help")) {
+                Helper.help();
 
-            System.exit(0);
-        }
-
-        if (commandLine.length < 3) {
-            throw new IllegalArgumentException("Введены не все параметры. Пожалуйста, введите команду заново или воспользуйтесь -help");
+                System.exit(0);
+            }
         }
 
         SortOrder sortOrder = SortOrder.ASCENDING;
@@ -27,33 +25,45 @@ public class CommandLineParserImp implements CommandLineParser {
         ChunkMaxSize chunkMaxSize = new ChunkMaxSize();
         ArrayList<String> filesList = new ArrayList<>();
 
-        for (String arg : commandLine) {
-            if (ChunkService.isChunkCommand(arg)) {
-                int size = ChunkService.getCount(arg);
-                if (size > 0) {
-                    chunkMaxSize = ChunkService.getSortingChunkMaxSize(size);
+        try {
+            if (commandLine.length < 3) {
+                throw new IllegalArgumentException("Введены не все параметры. Пожалуйста, введите команду заново или воспользуйтесь -help");
+            }
+
+            for (String arg : commandLine) {
+                if (ChunkService.isChunkCommand(arg)) {
+                    int size = ChunkService.getCount(arg);
+                    if (size > 0) {
+                        chunkMaxSize = ChunkService.getSortingChunkMaxSize(size);
+                    }
+
+                    continue;
                 }
 
-                continue;
+                switch (arg) {
+                    case ("-d"):
+                        sortOrder = SortOrder.DESCENDING;
+                        break;
+                    case ("-a"):
+                        sortOrder = SortOrder.ASCENDING;
+                        break;
+                    case ("-i"):
+                        dataType = DataType.INTEGER;
+                        break;
+                    case ("-s"):
+                        dataType = DataType.STRING;
+                        break;
+                    default:
+                        filesList.add(arg);
+                        break;
+                }
             }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
 
-            switch (arg) {
-                case ("-d"):
-                    sortOrder = SortOrder.DESCENDING;
-                    break;
-                case ("-a"):
-                    sortOrder = SortOrder.ASCENDING;
-                    break;
-                case ("-i"):
-                    dataType = DataType.INTEGER;
-                    break;
-                case ("-s"):
-                    dataType = DataType.STRING;
-                    break;
-                default:
-                    filesList.add(arg);
-                    break;
-            }
+            Helper.getHelpCommand();
+
+            System.exit(0);
         }
 
         return new SettingsImp(sortOrder, dataType, filesList, chunkMaxSize);
