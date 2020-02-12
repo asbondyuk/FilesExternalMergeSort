@@ -1,4 +1,4 @@
-package cft.focusstart.bondyuk.filesSorter;
+package cft.focusstart.bondyuk.settings.dataType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

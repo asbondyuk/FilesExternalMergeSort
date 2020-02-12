@@ -1,6 +1,7 @@
 package cft.focusstart.bondyuk.filesSorter;
 
-import cft.focusstart.bondyuk.settings.DataType;
+import cft.focusstart.bondyuk.settings.dataType.DataType;
+import cft.focusstart.bondyuk.settings.dataType.DataWrapper;
 import cft.focusstart.bondyuk.settings.Settings;
 
 import java.io.*;

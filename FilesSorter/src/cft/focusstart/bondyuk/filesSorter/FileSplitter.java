@@ -1,8 +1,9 @@
 package cft.focusstart.bondyuk.filesSorter;
 
-import cft.focusstart.bondyuk.settings.DataType;
+import cft.focusstart.bondyuk.settings.dataType.DataType;
+import cft.focusstart.bondyuk.settings.dataType.DataValidator;
+import cft.focusstart.bondyuk.settings.dataType.DataWrapper;
 import cft.focusstart.bondyuk.settings.Settings;
-import cft.focusstart.bondyuk.settings.SortingChunkMaxSize;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class FileSplitter {
 
     private ArrayList<File> splitFile(File file) {
         ArrayList<File> tempFiles = new ArrayList<>();
-        String[] chunk = new String[SortingChunkMaxSize.getSize()];
+        String[] chunk = new String[settings.getChunkMaxSize()];
 
         try (FileReader fileReader = new FileReader(file);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
@@ -39,7 +40,7 @@ public class FileSplitter {
                 if (currentLine != null) {
                     chunk[sizeCurrentChunk] = currentLine;
 
-                    if (sizeCurrentChunk + 1 == SortingChunkMaxSize.getSize()) {
+                    if (sizeCurrentChunk + 1 == settings.getChunkMaxSize()) {
                         tempFiles.add(createTempFile(chunk));
                         sizeCurrentChunk = 0;
 
@@ -55,8 +56,8 @@ public class FileSplitter {
                     break;
                 }
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
 
         return tempFiles;

@@ -11,12 +11,16 @@ public class FilesSorter {
         this.settings = settings;
     }
 
-    public void mergeSortFiles() throws IOException {
+    public void mergeSortFiles() {
         FileSplitter fileSplitter = new FileSplitter(settings);
 
         FilesMerger filesMerger = new FilesMerger(settings);
 
-        filesMerger.mergeFiles(fileSplitter.splitFiles());
+        try {
+            filesMerger.mergeFiles(fileSplitter.splitFiles());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
         System.out.println("Сортировка выполнена");
     }
