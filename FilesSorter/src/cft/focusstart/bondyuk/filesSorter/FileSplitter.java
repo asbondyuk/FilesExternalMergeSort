@@ -6,6 +6,7 @@ import cft.focusstart.bondyuk.settings.SortingChunkMaxSize;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class FileSplitter {
     private Settings settings;
@@ -33,21 +34,27 @@ public class FileSplitter {
             int sizeCurrentChunk = 0;
             String currentLine;
 
-            do {
+            while (true) {
                 currentLine = bufferedReader.readLine();
                 if (currentLine != null) {
-                    if (sizeCurrentChunk == SortingChunkMaxSize.getSize()) {
+                    chunk[sizeCurrentChunk] = currentLine;
+
+                    if (sizeCurrentChunk + 1 == SortingChunkMaxSize.getSize()) {
                         tempFiles.add(createTempFile(chunk));
                         sizeCurrentChunk = 0;
+
+                        Arrays.fill(chunk, null);
                     } else {
-                        chunk[sizeCurrentChunk] = currentLine;
                         ++sizeCurrentChunk;
                     }
                 } else {
-                    tempFiles.add(createTempFile(chunk));
+                    if (sizeCurrentChunk > 0) {
+                        tempFiles.add(createTempFile(chunk));
+                    }
+
                     break;
                 }
-            } while (true);
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }

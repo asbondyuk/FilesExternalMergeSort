@@ -1,10 +1,8 @@
 package cft.focusstart.bondyuk.filesSorter;
 
-import cft.focusstart.bondyuk.settings.DataType;
 import cft.focusstart.bondyuk.settings.Settings;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.IOException;
 
 public class FilesSorter {
     private Settings settings;
