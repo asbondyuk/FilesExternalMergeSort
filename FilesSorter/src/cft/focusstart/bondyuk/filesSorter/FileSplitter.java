@@ -35,18 +35,17 @@ public class FileSplitter {
 
             do {
                 currentLine = bufferedReader.readLine();
-
-                if (sizeCurrentChunk == SortingChunkMaxSize.getSize() || currentLine == null) {
-                    tempFiles.add(createTempFile(chunk));
-
-                    sizeCurrentChunk = 0;
-
-                    if (currentLine == null) {
-                        break;
+                if (currentLine != null) {
+                    if (sizeCurrentChunk == SortingChunkMaxSize.getSize()) {
+                        tempFiles.add(createTempFile(chunk));
+                        sizeCurrentChunk = 0;
+                    } else {
+                        chunk[sizeCurrentChunk] = currentLine;
+                        ++sizeCurrentChunk;
                     }
                 } else {
-                    chunk[sizeCurrentChunk] = currentLine;
-                    ++sizeCurrentChunk;
+                    tempFiles.add(createTempFile(chunk));
+                    break;
                 }
             } while (true);
         } catch (IOException ex) {
@@ -63,15 +62,17 @@ public class FileSplitter {
         try (FileWriter fileWriter = new FileWriter(newFile);
              PrintWriter printWriter = new PrintWriter(fileWriter)) {
 
+            String[] correctChunk = DataValidator.deleteNull(chunk);
+
             if (settings.getDataType() == DataType.INTEGER) {
-                Integer[] data = DataWrapper.getIntegerData(chunk);
+                Integer[] data = DataValidator.getIntegerData(correctChunk);
                 settings.getSorter().sort(data, settings.getSortComparator());
 
                 for (Integer s : data) {
                     printWriter.println(s);
                 }
             } else {
-                String[] data = DataWrapper.getStringData(chunk);
+                String[] data = DataValidator.getStringData(correctChunk);
                 settings.getSorter().sort(data, settings.getSortComparator());
 
                 for (String s : data) {

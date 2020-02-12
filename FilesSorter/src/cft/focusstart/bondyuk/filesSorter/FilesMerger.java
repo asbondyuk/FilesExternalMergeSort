@@ -13,13 +13,6 @@ public class FilesMerger {
         this.settings = settings;
     }
 
-    private BufferedReader getBufferedRead(File file) throws FileNotFoundException {
-        FileReader fileReader = new FileReader(file);
-
-        return new BufferedReader(fileReader);
-
-    }
-
     public void mergeFiles(ArrayList<File> tempFiles) throws IOException {
         ArrayList<String> filesMaxNumbers = new ArrayList<>();
         ArrayList<BufferedReader> bufferedReaders = new ArrayList<>();
@@ -54,16 +47,16 @@ public class FilesMerger {
                     tmp[1] = filesMaxNumbers.get(j);
 
                     if (settings.getDataType() == DataType.INTEGER) {
-                        Integer one = DataWrapper.getInteger(tmp[0]);
-                        Integer two = DataWrapper.getInteger(tmp[1]);
+                        Integer one = DataValidator.getInteger(tmp[0]);
+                        Integer two = DataValidator.getInteger(tmp[1]);
 
                         if (settings.getSortComparator().compare(one, two) > 0) {
                             nextWriteItem = filesMaxNumbers.get(j);
                             nextWriteItemFileIndex = j;
                         }
                     } else {
-                        String one = DataWrapper.getString(tmp[0]);
-                        String two = DataWrapper.getString(tmp[1]);
+                        String one = DataValidator.getString(tmp[0]);
+                        String two = DataValidator.getString(tmp[1]);
 
                         if (settings.getSortComparator().compare(one, two) > 0) {
                             nextWriteItem = filesMaxNumbers.get(j);
@@ -86,5 +79,11 @@ public class FilesMerger {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private BufferedReader getBufferedRead(File file) throws FileNotFoundException {
+        FileReader fileReader = new FileReader(file);
+
+        return new BufferedReader(fileReader);
     }
 }
